@@ -1,0 +1,33 @@
+/*
+Makes the form look nicer and more consistent with the rest of the app.
+
+1. Wrap the form in a container with padding and a border.
+2. Style the input fields and labels for better readability.
+3. Style the submit button to match the app's theme.
+4. Dropdowns are way too long, need to set a max width and make them scrollable if there are too many options.
+
+*/
+.add-case-form {
+  padding: 16px;
+  border: 1px solid #e4e4e4;
+  border-radius: 8px;
+  max-width: 400px;
+}
+.add-case-form label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+.add-case-form input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #e4e4e4;
+  border-radius: 4px;
+}
+.add-case-form select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #e4e4e4;
+  border-radius: 4px;
+  max-width: 100%;
+}

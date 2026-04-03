@@ -1,0 +1,14 @@
+/*
+Formatting for result table
+*/
+
+.filter-row th select {
+  width: 100%;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.filter-row th select .filter-option {
+  white-space: normal;
+}

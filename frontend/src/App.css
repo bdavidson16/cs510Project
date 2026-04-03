@@ -1,0 +1,123 @@
+.app-container {
+  padding: 24px;
+  text-align: left;
+  position: relative;
+  padding-bottom: 96px;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-image {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.corner-logo {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.page-nav {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.page-nav button,
+.table-pagination button,
+.add-case-form button {
+  padding: 8px 12px;
+  border: 1px solid #000000;
+  background: #000000;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.page-nav button:disabled,
+.table-pagination button:disabled,
+.add-case-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.result-table.zoomed {
+  min-width: 1200px;
+  font-size: 1.1rem;
+}
+
+.result-table th,
+.result-table td {
+  border: 1px solid #e4e4e4;
+  padding: 8px;
+}
+
+.result-table.zoomed th,
+.result-table.zoomed td {
+  padding: 12px;
+}
+
+.result-table th {
+  background: #f8f8f8;
+  cursor: pointer;
+}
+
+.result-table thead select {
+  width: 100%;
+}
+
+.table-pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.add-case-form {
+  display: grid;
+  gap: 12px;
+  max-width: 560px;
+}
+
+.add-case-form label {
+  display: grid;
+  gap: 4px;
+}
+
+.add-case-form select {
+  padding: 8px;
+}
+
+@media (max-width: 640px) {
+  .header-image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .corner-logo {
+    width: 52px;
+    height: 52px;
+    right: 10px;
+    bottom: 10px;
+  }
+}
