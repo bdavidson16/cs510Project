@@ -1,4 +1,4 @@
-name: Deploy to Pages
+name: Deploy Vite site to Pages
 
 on:
   push:
