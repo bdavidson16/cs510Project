@@ -14,6 +14,9 @@ def _env(name: str, default: str = "") -> str:
 
 
 def _build_db_url() -> str:
+    mysql_url = _env("MYSQL_URL")
+    if mysql_url:
+        return mysql_url
     host = _env("DB_HOST", "localhost")
     port = _env("DB_PORT", "3306")
     user = _env("DB_USER", "root")
