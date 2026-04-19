@@ -21,6 +21,9 @@ class AddRowPayload(BaseModel):
     row: dict[str, Any] = Field(default_factory=dict)
 
 
+GENERIC_DB_ERROR = "Database operation failed."
+
+
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
@@ -32,7 +35,7 @@ def db_check():
         check_db()
         return {"db": "ok"}
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        raise HTTPException(status_code=500, detail=GENERIC_DB_ERROR) from exc
 
 
 @app.get("/api/table")
@@ -41,7 +44,7 @@ def get_default_table():
         rows = get_whole_table(TABLE_NAME)
         return {"table": TABLE_NAME, "rows": rows}
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        raise HTTPException(status_code=500, detail=GENERIC_DB_ERROR) from exc
 
 
 @app.get("/api/table/{table}")
@@ -50,7 +53,7 @@ def get_table(table: str):
         rows = get_whole_table(table)
         return {"table": table, "rows": rows}
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        raise HTTPException(status_code=500, detail=GENERIC_DB_ERROR) from exc
 
 
 @app.get("/api/table/{table}/filters")
@@ -59,7 +62,7 @@ def get_table_filters(table: str):
         filters = get_filters(table)
         return {"table": table, "filters": filters}
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        raise HTTPException(status_code=500, detail=GENERIC_DB_ERROR) from exc
 
 
 @app.post("/api/table/{table}/rows")
@@ -70,7 +73,7 @@ def add_table_row(table: str, payload: AddRowPayload):
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        raise HTTPException(status_code=500, detail=GENERIC_DB_ERROR) from exc
 
 
 @app.get("/api/table/{table}/row")
@@ -83,4 +86,4 @@ def check_row_exists(table: str, request: Request):
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        raise HTTPException(status_code=500, detail=GENERIC_DB_ERROR) from exc

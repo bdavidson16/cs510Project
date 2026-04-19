@@ -1,0 +1,45 @@
+-- source server config file
+[mysqld]
+server-id=1
+log_bin=mysql-bin
+binlog_format=ROW
+gtid_mode=ON
+enforce_gtid_consistency=ON
+
+-- replica server config file
+[mysqld]
+server-id=2
+relay_log=relay-bin
+log_bin=mysql-bin
+binlog_format=ROW
+gtid_mode=ON
+enforce_gtid_consistency=ON
+super_read_only=ON
+
+-- source server
+CREATE USER IF NOT EXISTS 'repl'@'127.0.0.1' IDENTIFIED BY 'pAsZw0Rd419*';
+GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'repl'@'127.0.0.1';
+FLUSH PRIVILEGES;
+
+-- need same data in both servers prior to starting replication, in shell
+mysqldump -u root -p --all-databases --single-transaction --routines --triggers --events > fullbackup.sql
+
+mysql -u root -p < fullbackup.sql
+
+
+-- Point the replica to the source using GTID auto-positioning
+STOP REPLICA;
+CHANGE REPLICATION SOURCE TO
+  SOURCE_HOST='127.0.0.1',
+  SOURCE_PORT=3306,
+  SOURCE_USER='repl',
+  SOURCE_PASSWORD='',
+  SOURCE_AUTO_POSITION=1;
+START REPLICA;
+SHOW REPLICA STATUS\G
+
+-- insert test row and then check on replica
+INSERT INTO vaccine_database.vaccine_info (vaccine_id, vaccine_name, req_dosage)
+VALUES ('01KN2FACT134QE3W2JBH9X55TZ', 'Immunoboost Suspension', 2.1);
+
+SELECT * FROM vaccine_database.vaccine_info WHERE vaccine_name = 'Immunoboost Suspension';

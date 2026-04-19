@@ -1,5 +1,18 @@
+'''
+Phase 4 goal: Ensure your system is not vulnerable to different attacks such as SQL injections, role management, and other security best practices. Always validate and sanitize user inputs, use parameterized queries, and implement proper authentication and authorization mechanisms.
+
+Tests (in separate file but for database layer):
+- Replication test/lag test
+- Role/permission test - make sure that application only has read/write access
+- SQL injection test
+- Validation test - for write statements to database
+- Error exposure test - make sure that application cannot see database errors/logs
+
+'''
+
 import os
 import re
+import time
 from typing import Any
 
 from dotenv import load_dotenv
@@ -132,7 +145,7 @@ def add_row(table: str | None, row_data: dict[str, Any]) -> dict[str, Any]:
         existing_patient = check_row_exists(safe_table, {"patient_id": patient_id})
         if not existing_patient:
             execute_db(
-                "INSERT INTO patient_info (patient_id) VALUES (:patient_id, :NAME, :DOB, :SEX)",
+                "INSERT INTO patient_info (patient_id, NAME, DOB, SEX) VALUES (:patient_id, :NAME, :DOB, :SEX)",
                 {"patient_id": patient_id, "NAME": row_data.get("NAME"), "DOB": row_data.get("DOB"), "SEX": row_data.get("SEX")}
             )
     
@@ -171,3 +184,54 @@ def check_row_exists(table: str | None, row_data: dict[str, Any]) -> bool:
 
     result = query_db(query_stmt, cleaned_row)
     return bool(result)
+
+
+def check_row_exists_with_retry(
+    table: str | None,
+    row_data: dict[str, Any],
+    retries: int = 3,
+    delay_seconds: float = 0.1,
+) -> bool:
+    if retries < 1:
+        raise ValueError("Retries must be at least 1.")
+
+    for attempt in range(retries):
+        if check_row_exists(table, row_data):
+            return True
+        if attempt < retries - 1:
+            time.sleep(delay_seconds)
+    return False
+
+
+def get_current_user_grants() -> list[str]:
+    rows = query_db("SHOW GRANTS FOR CURRENT_USER", None)
+    return [row[0] for row in rows if row]
+
+
+def has_only_read_write_access(grants: list[str]) -> bool:
+    if not grants:
+        return False
+
+    forbidden = {
+        "ALL PRIVILEGES",
+        "ALTER",
+        "CREATE",
+        "DELETE",
+        "DROP",
+        "GRANT OPTION",
+        "INDEX",
+        "REFERENCES",
+        "TRIGGER",
+    }
+
+    saw_rw_privilege = False
+    for grant in grants:
+        normalized = grant.upper()
+        if "USAGE ON *.*" in normalized:
+            continue
+        if any(priv in normalized for priv in forbidden):
+            return False
+        if any(priv in normalized for priv in ("SELECT", "INSERT", "UPDATE")):
+            saw_rw_privilege = True
+
+    return saw_rw_privilege
