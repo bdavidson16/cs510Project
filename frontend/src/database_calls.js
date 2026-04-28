@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://your-railway-app-url.railway.app/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 const DatabaseCalls = {
   async returnEntireTable(table) {
